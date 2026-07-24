@@ -5,6 +5,7 @@ import { motion } from "framer-motion";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Eye, EyeOff, Loader2, User, Mail, Lock } from "lucide-react";
+import { toast } from "sonner";
 import { authClient } from "@/lib/auth-client";
 
 export default function Register() {
@@ -39,21 +40,22 @@ export default function Register() {
             });
 
             if (error) {
-                alert(error.message);
+                toast.error(error.message || "Failed to create account.");
                 return;
             }
 
-            console.log(data);
+            toast.success("Account created successfully!");
             router.push("/");
         } catch (error) {
             console.error(error);
+            toast.error("An unexpected error occurred. Please try again.");
         } finally {
             setLoading(false);
         }
     };
 
     return (
-        <main className="relative min-h-screen flex items-center justify-center bg-neutral-950 px-6 text-white overflow-hidden">
+        <main className="relative pt-10 min-h-screen flex items-center justify-center bg-neutral-950 px-6 text-white overflow-hidden">
             {/* Background Ambient Glows */}
             <div className="absolute top-1/4 -left-20 w-96 h-96 bg-red-600/20 rounded-full blur-3xl pointer-events-none" />
             <div className="absolute bottom-1/4 -right-20 w-96 h-96 bg-red-900/15 rounded-full blur-3xl pointer-events-none" />
