@@ -128,7 +128,7 @@ export default function Navbar() {
                     {/* Role-based Dashboard Link */}
                     {user.role === "admin" && (
                       <Link
-                        href="/dashboard"
+                        href="/dashboard/admin"
                         onClick={() => setIsDropdownOpen(false)}
                         className="flex items-center gap-2.5 px-3 py-2 text-sm text-neutral-200 rounded-xl hover:bg-white/10 transition"
                       >
@@ -223,7 +223,7 @@ export default function Navbar() {
                     {/* Admin Dashboard on mobile */}
                     {user.role === "admin" && (
                       <Link
-                        href="/dashboard"
+                        href="/dashboard/admin"
                         onClick={() => setIsMenuOpen(false)}
                         className="flex items-center gap-2.5 w-full px-4 py-3 text-sm text-neutral-200 rounded-2xl bg-white/5 hover:bg-white/10 transition"
                       >
