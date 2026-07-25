@@ -14,6 +14,7 @@ import {
     Shield,
     Bell,
     ArrowUpRight,
+    BookCheck,
 } from "lucide-react";
 import { toast } from "sonner";
 import { authClient } from "@/lib/auth-client";
@@ -45,6 +46,11 @@ export default function AdminDashboardLayout({ children }) {
             label: "Upload",
             path: "/dashboard/admin/upload",
             icon: UploadCloud,
+        },
+        {
+            label: "Bookings",
+            path: "/dashboard/admin/bookings",
+            icon: BookCheck,
         },
     ];
 
@@ -93,8 +99,8 @@ export default function AdminDashboardLayout({ children }) {
                                 href={item.path}
                                 onClick={() => setIsMobileMenuOpen(false)}
                                 className={`group flex items-center justify-between px-4 py-3 rounded-2xl text-sm font-semibold transition-all duration-200 ${isActive
-                                        ? "bg-red-600 text-white shadow-lg shadow-red-600/25"
-                                        : "text-neutral-400 hover:bg-neutral-800 hover:text-white"
+                                    ? "bg-red-600 text-white shadow-lg shadow-red-600/25"
+                                    : "text-neutral-400 hover:bg-neutral-800 hover:text-white"
                                     }`}
                             >
                                 <div className="flex items-center gap-3.5">
@@ -112,8 +118,8 @@ export default function AdminDashboardLayout({ children }) {
                                 {item.badge && (
                                     <span
                                         className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${isActive
-                                                ? "bg-white/20 text-white"
-                                                : "bg-red-500/20 text-red-400 border border-red-500/30"
+                                            ? "bg-white/20 text-white"
+                                            : "bg-red-500/20 text-red-400 border border-red-500/30"
                                             }`}
                                     >
                                         {item.badge}
