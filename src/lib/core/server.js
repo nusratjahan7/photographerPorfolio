@@ -12,9 +12,7 @@ export const authHeader = async () => {
 }
 
 export const serverFetch = async (path) => {
-    const res = await fetch(`${baseUrl}${path}`, {
-        cache: 'no-store'
-    });
+    const res = await fetch(`${baseUrl}${path}`);
 
     if (!res.ok) {
         const text = await res.text();
@@ -23,6 +21,7 @@ export const serverFetch = async (path) => {
 
     return handleStatus(res);
 };
+
 export const protectedFetch = async (path) => {
     const res = await fetch(`${baseUrl}${path}`, {
         headers: await authHeader()
