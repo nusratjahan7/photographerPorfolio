@@ -1,7 +1,7 @@
 import { redirect } from "next/navigation";
 import { getUserToken } from "./session";
 
-const baseUrl = (process.env.NEXT_PUBLIC_BACKEND_URL || process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000').replace(/\/$/, '');
+const baseUrl = (process.env.NEXT_PUBLIC_BACKEND_URL || process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000');
 
 export const authHeader = async () => {
     const token = await getUserToken();

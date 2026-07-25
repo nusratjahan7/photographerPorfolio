@@ -1,13 +1,13 @@
 "use client";
 
-import { useEffect } from "react";
+import { Suspense, useEffect } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { CheckCircle2, ArrowRight } from "lucide-react";
 
 const STORAGE_KEY = "purchasedPhotos";
 
-export default function PaymentSuccessPage() {
+function PaymentSuccessContent() {
     const searchParams = useSearchParams();
     const router = useRouter();
 
@@ -53,5 +53,13 @@ export default function PaymentSuccessPage() {
                 </Link>
             </div>
         </main>
+    );
+}
+
+export default function PaymentSuccessPage() {
+    return (
+        <Suspense fallback={<main className="min-h-screen bg-neutral-950 px-6 py-24 text-white" />}>
+            <PaymentSuccessContent />
+        </Suspense>
     );
 }

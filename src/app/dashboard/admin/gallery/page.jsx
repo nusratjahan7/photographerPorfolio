@@ -109,7 +109,6 @@ export default function GalleryManagement() {
         setActionLoading(true);
         try {
             const data = await updateGalleryPhoto(selectedPhoto._id, formData);
-
             if (data?.success) {
                 setIsEditModalOpen(false);
                 fetchPhotos();
@@ -117,6 +116,7 @@ export default function GalleryManagement() {
                 alert(data?.message || 'Failed to update photo.');
             }
         } catch (error) {
+            if (isRedirectError(error)) throw error;
             console.error('Update Error:', error);
             alert(error.message || 'Failed to update photo.');
         } finally {

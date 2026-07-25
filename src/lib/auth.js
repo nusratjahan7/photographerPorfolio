@@ -8,6 +8,14 @@ const db = client.db(process.env.AUTH_DB_NAME);
 
 
 
+export const getAuthDb = async () => {
+    if (!client.topology?.isConnected?.()) {
+        await client.connect();
+    }
+
+    return db;
+};
+
 export const auth = betterAuth({
     database: mongodbAdapter(db, { client }),
     emailAndPassword: {

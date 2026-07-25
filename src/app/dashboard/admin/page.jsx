@@ -85,6 +85,7 @@ const AnalyticsOverview = () => {
                 const result = await getAnalyticsOverview();
                 if (active) setData(result);
             } catch (err) {
+                if (isRedirectError(err)) throw err;
                 console.error('Analytics fetch error:', err);
                 if (active) setError(err.message || 'Failed to load analytics.');
             } finally {
@@ -93,9 +94,7 @@ const AnalyticsOverview = () => {
         };
 
         load();
-        return () => {
-            active = false;
-        };
+        return () => { active = false; };
     }, []);
 
     if (loading) {

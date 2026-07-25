@@ -1,5 +1,4 @@
 import { headers } from 'next/headers';
-import { ObjectId } from 'mongodb';
 import { auth, getAuthDb } from '@/lib/auth';
 
 const getSessionUser = async () => {
