@@ -25,3 +25,9 @@ export const updateGalleryPhoto = async (photoId, payload) => {
 export const deleteGalleryPhoto = async (photoId) => {
     return serverMutation(`/gallery/${photoId}`, {}, 'DELETE');
 };
+
+
+export const getAnalyticsOverview = async () => {
+    const res = await protectedFetch('/analytics/overview');
+    return res?.data || null;
+};
