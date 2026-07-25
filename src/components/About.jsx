@@ -2,12 +2,13 @@
 
 import Image from "next/image";
 import { motion } from "framer-motion";
+import Link from "next/link";
 
 export default function About() {
     return (
         <section
             id="about"
-            className="bg-black py-24 text-white overflow-hidden"
+            className="bg-black py-10 text-white overflow-hidden"
         >
 
             <div className="mx-auto grid max-w-7xl items-center gap-12 px-6 md:grid-cols-2">
@@ -114,11 +115,13 @@ export default function About() {
 
 
 
-                    <button
-                        className="mt-10 rounded-full bg-red-600 px-8 py-4 font-bold text-black transition hover:bg-red-500"
-                    >
-                        Explore My Work
-                    </button>
+                    <Link href="/gallery">
+                        <button
+                            className="mt-10 rounded-full bg-red-600 px-8 py-4 font-bold text-black transition hover:bg-red-500"
+                        >
+                            Explore My Work
+                        </button>
+                    </Link>
 
 
                 </motion.div>
