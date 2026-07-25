@@ -3,6 +3,9 @@ import { serverFetch, serverMutation } from "../core/server";
 export const getGallery = async () => {
     return serverFetch('/gallery');
 };
+export const getFeaturedGallery = async () => {
+    return serverFetch('/gallery/features');
+};
 
 export const getGalleryPhoto = async (id) => {
     if (!id) return null;
