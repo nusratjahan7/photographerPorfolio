@@ -1,13 +1,11 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useMemo, useState, useEffect } from 'react';
 import { Eye, Trash2, Search, Filter, Image as ImageIcon, DollarSign, Tag, X, Upload, AlertTriangle } from 'lucide-react';
-
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000';
+import { deleteGalleryPhoto, getAdminGalleryPhotos, updateGalleryPhoto } from '@/lib/actions/admin';
 
 export default function GalleryManagement() {
     const [photos, setPhotos] = useState([]);
-    const [filteredPhotos, setFilteredPhotos] = useState([]);
     const [loading, setLoading] = useState(true);
     const [searchQuery, setSearchQuery] = useState('');
     const [filterType, setFilterType] = useState('all');
@@ -32,16 +30,11 @@ export default function GalleryManagement() {
     const fetchPhotos = async () => {
         setLoading(true);
         try {
-            const res = await fetch(`${API_BASE_URL}/gallery`);
-            const data = await res.json();
-            if (res.ok) {
-                setPhotos(data);
-                setFilteredPhotos(data);
-            } else {
-                alert(data.message || 'Failed to fetch photos.');
-            }
+            const photosList = await getAdminGalleryPhotos();
+            setPhotos(photosList);
         } catch (error) {
             console.error('Error fetching gallery:', error);
+            alert(error.message || 'Failed to fetch photos.');
         } finally {
             setLoading(false);
         }
@@ -52,7 +45,7 @@ export default function GalleryManagement() {
     }, []);
 
     // Filter and Search logic
-    useEffect(() => {
+    const filteredPhotos = useMemo(() => {
         let result = photos;
 
         if (searchQuery) {
@@ -69,7 +62,7 @@ export default function GalleryManagement() {
             result = result.filter((p) => p.isPaid);
         }
 
-        setFilteredPhotos(result);
+        return result;
     }, [searchQuery, filterType, photos]);
 
     // Open Edit Modal
@@ -115,21 +108,17 @@ export default function GalleryManagement() {
 
         setActionLoading(true);
         try {
-            const res = await fetch(`${API_BASE_URL}/gallery/${selectedPhoto._id}`, {
-                method: 'PUT',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(formData),
-            });
+            const data = await updateGalleryPhoto(selectedPhoto._id, formData);
 
-            const data = await res.json();
-            if (res.ok && data.success) {
+            if (data?.success) {
                 setIsEditModalOpen(false);
                 fetchPhotos();
             } else {
-                alert(data.message || 'Failed to update photo.');
+                alert(data?.message || 'Failed to update photo.');
             }
         } catch (error) {
             console.error('Update Error:', error);
+            alert(error.message || 'Failed to update photo.');
         } finally {
             setActionLoading(false);
         }
@@ -141,19 +130,17 @@ export default function GalleryManagement() {
 
         setActionLoading(true);
         try {
-            const res = await fetch(`${API_BASE_URL}/gallery/${selectedPhoto._id}`, {
-                method: 'DELETE',
-            });
+            const data = await deleteGalleryPhoto(selectedPhoto._id);
 
-            const data = await res.json();
-            if (res.ok && data.success) {
+            if (data?.success) {
                 setIsDeleteModalOpen(false);
                 fetchPhotos();
             } else {
-                alert(data.message || 'Failed to delete photo.');
+                alert(data?.message || 'Failed to delete photo.');
             }
         } catch (error) {
             console.error('Delete Error:', error);
+            alert(error.message || 'Failed to delete photo.');
         } finally {
             setActionLoading(false);
         }
@@ -465,7 +452,7 @@ export default function GalleryManagement() {
                         </div>
 
                         <p className="text-sm text-neutral-600 dark:text-neutral-300 leading-relaxed mb-6">
-                            Are you sure you want to delete <strong className="text-black dark:text-white">"{selectedPhoto?.title} "</strong>? This will permanently remove the record from your database.
+                            Are you sure you want to delete <strong className="text-black dark:text-white">{selectedPhoto?.title}</strong>? This will permanently remove the record from your database.
                         </p>
 
                         <div className="flex items-center justify-end space-x-3">
