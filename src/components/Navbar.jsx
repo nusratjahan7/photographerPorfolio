@@ -8,7 +8,7 @@ import { LayoutDashboard, LogOut, Menu, X, ChevronDown } from "lucide-react";
 import { authClient } from "@/lib/auth-client";
 
 const navLinks = [
-  { name: "About", href: "/about" },
+  { name: "Home", href: "/" },
   { name: "Gallery", href: "/gallery" },
   { name: "Services", href: "/services" },
   { name: "Pricing", href: "/pricing" },
