@@ -4,8 +4,7 @@ import { Suspense, useEffect } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { CheckCircle2, ArrowRight } from "lucide-react";
-
-const STORAGE_KEY = "purchasedPhotos";
+import { savePurchasedPhotoId } from "@/lib/gallery/purchase-state";
 
 function PaymentSuccessContent() {
     const searchParams = useSearchParams();
@@ -17,13 +16,7 @@ function PaymentSuccessContent() {
         const photoId = searchParams.get("photoId") || searchParams.get("eventId");
 
         try {
-            const saved = window.localStorage.getItem(STORAGE_KEY);
-            const purchased = saved ? JSON.parse(saved) : [];
-
-            if (!purchased.includes(photoId)) {
-                purchased.push(photoId);
-                window.localStorage.setItem(STORAGE_KEY, JSON.stringify(purchased));
-            }
+            savePurchasedPhotoId(photoId);
         } catch (error) {
             console.error("Failed to save purchase state:", error);
         }

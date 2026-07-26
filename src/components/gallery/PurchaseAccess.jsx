@@ -1,29 +1,15 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { DollarSign, Download, Loader2 } from "lucide-react";
 import { createCheckoutSession } from "@/lib/api/gallery";
-
-const STORAGE_KEY = "purchasedPhotos";
-
-const getPurchasedPhotoIds = () => {
-    if (typeof window === "undefined") return [];
-
-    try {
-        const saved = window.localStorage.getItem(STORAGE_KEY);
-        const purchased = saved ? JSON.parse(saved) : [];
-        return Array.isArray(purchased) ? purchased : [];
-    } catch (error) {
-        console.error("Failed to read purchase state:", error);
-        return [];
-    }
-};
+import { getPurchasedPhotoIds } from "@/lib/gallery/purchase-state";
 
 export default function PurchaseAccess({ photo, priceText }) {
     const [loading, setLoading] = useState(false);
-    const purchasedIds = getPurchasedPhotoIds();
     const photoId = String(photo?._id || photo?.id || "");
-    const isUnlocked = purchasedIds.includes(photoId);
+    const purchasedIds = useMemo(() => getPurchasedPhotoIds(), []);
+    const isUnlocked = useMemo(() => purchasedIds.includes(photoId), [purchasedIds, photoId]);
 
     const handleCheckout = async () => {
         try {
