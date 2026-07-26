@@ -19,14 +19,18 @@ export default function Navbar() {
   const router = useRouter();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const [mounted, setMounted] = useState(false);
   const dropdownRef = useRef(null);
 
   // Get session data from authClient
   const { data: session, isPending } = authClient.useSession();
   const user = session?.user;
+  const showAuthSkeleton = !mounted || isPending;
 
   // Close dropdown on click outside
   useEffect(() => {
+    setMounted(true);
+
     const handleClickOutside = (event) => {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
         setIsDropdownOpen(false);
@@ -88,7 +92,7 @@ export default function Navbar() {
 
         {/* Desktop Auth Buttons / User Menu */}
         <div className="hidden md:flex items-center gap-3">
-          {isPending ? (
+          {showAuthSkeleton ? (
             <div className="w-10 h-10 rounded-full bg-neutral-800 animate-pulse border border-white/10" />
           ) : user ? (
             /* User Avatar & Dropdown */
@@ -204,7 +208,9 @@ export default function Navbar() {
               </div>
 
               <div className="pt-4 border-t border-white/10">
-                {user ? (
+                {showAuthSkeleton ? (
+                  <div className="w-full h-10 rounded-2xl bg-white/10 animate-pulse" />
+                ) : user ? (
                   <div className="space-y-3">
                     {/* User info header on mobile */}
                     <div className="flex items-center gap-3 px-2">
