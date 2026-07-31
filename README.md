@@ -1,36 +1,104 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# Photography Portfolio
+
+A modern, dark-themed photography portfolio website built with **Next.js 16** (App Router), **React 19**, and **Tailwind CSS 4**. It showcases a photographer's work, offers paid photo downloads via Stripe checkout, handles session booking, and includes a full admin dashboard.
+
+## Features
+
+- **Landing page** — hero banner, stats, featured/latest work, about, and client feedback sections.
+- **Gallery** — search, category filter, free/paid filter, pagination, and per-photo detail pages.
+- **Paid downloads** — premium photos are locked and unlocked via a Stripe checkout session (handled by an external backend).
+- **Services & Pricing** — service cards and pricing tiers (Basic / Premium / Luxury) that link to the booking form.
+- **Booking form** — public contact/booking page that submits requests to the backend.
+- **Authentication** — email/password auth via [Better Auth](https://better-auth.com) with MongoDB adapter; role field for users (user/admin).
+- **Admin dashboard** — role-protected area to manage gallery photos, bookings, users, and view analytics.
+- **Smooth scroll** — Lenis smooth scrolling; animated UI with Framer Motion and Swiper.
+
+## Tech Stack
+
+| Layer | Tech |
+| --- | --- |
+| Framework | Next.js 16 (App Router) |
+| UI | React 19, Tailwind CSS 4 |
+| Motion | Framer Motion, Lenis, Swiper |
+| Icons | lucide-react, react-social-icons |
+| Auth | Better Auth (email/password + admin plugin) |
+| Database | MongoDB (`mongodb` driver) |
+| Toasts | Sonner |
 
 ## Getting Started
 
-First, run the development server:
+### Prerequisites
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+- Node.js 20+ (Next.js 16 requirement)
+- A MongoDB database
+- An external backend API serving `/gallery`, `/users`, `/bookings`, `/analytics/overview`, and Stripe checkout endpoints
+
+### Environment Variables
+
+Create a `.env` file in the project root. All values are secrets — never commit them.
+
+```
+BETTER_AUTH_SECRET=your-secret
+BETTER_AUTH_URL=http://localhost:3000
+
+NEXT_PUBLIC_BACKEND_URL=http://localhost:5000
+
+MONGODB_URI=mongodb+srv://user:pass@cluster0.mongodb.net/
+AUTH_DB_NAME=your-db-name
+
+NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=pk_test_...
+STRIPE_SECRET_KEY=sk_test_...
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+> Note: `NEXT_PUBLIC_BACKEND_URL` points at the separate backend service. The frontend proxies gallery/bookings/users/analytics to it via `src/lib/core/server.js`.
 
-You can start editing the page by modifying `app/page.js`. The page auto-updates as you edit the file.
+### Install & Run
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```bash
+npm install
+npm run dev       # start the dev server at http://localhost:3000
+```
 
-## Learn More
+### Production
 
-To learn more about Next.js, take a look at the following resources:
+```bash
+npm run build
+npm start
+```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+### Lint
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+```bash
+npm run lint
+```
 
-## Deploy on Vercel
+## Project Structure
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+```
+src/
+├── app/                  # App Router pages & routes
+│   ├── page.js           # Home (Banner, Stats, Featured, About, Feedback)
+│   ├── auth/             # Login & register pages
+│   ├── contact/          # Booking form
+│   ├── dashboard/admin/  # Admin dashboard (bookings, gallery, upload, users)
+│   ├── gallery/[id]/     # Photo detail pages
+│   ├── payment-success/  # Post-checkout success page
+│   ├── pricing/          # Pricing packages
+│   ├── services/         # Services overview
+│   └── api/auth/         # Better Auth route handler
+├── components/           # Shared UI (Navbar, Footer, Banner, PhotoCard, ...)
+│   └── gallery/          # Purchase/checkout + photo detail components
+└── lib/
+    ├── actions/          # Server actions for admin & bookings
+    ├── api/gallery.js    # Gallery API client
+    ├── core/             # serverFetch / protectedFetch / serverMutation helpers
+    ├── auth.js           # Better Auth server config
+    └── auth-client.js    # Better Auth client config
+```
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## How It Works
+
+1. **Auth** — `src/lib/auth.js` configures Better Auth with MongoDB. The Navbar uses `authClient.useSession()` to show Login/Register buttons or a user dropdown (admins get a Dashboard link).
+2. **Data fetching** — the frontend talks to an external backend through `src/lib/core/server.js` (`serverFetch` for public routes, `protectedFetch` for admin routes, `serverMutation` for writes). The user token from Better Auth is sent as a `Bearer` header.
+3. **Paid photos** — gallery items have an `isPaid` flag. `PurchaseAccess.jsx` calls the backend to create a Stripe Checkout session, then redirects the buyer. Unlocked photo IDs are persisted client-side so the download button appears.
+4. **Admin** — admins manage gallery photos (edit/delete), bookings (status/delete), users (role/delete), and view analytics from `src/lib/actions/admin.js`.
